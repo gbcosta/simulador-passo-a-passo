@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador Passo a Passo — Oficina de Inclusão Digital</title>
+<style>
+  :root{
+    --azul: #143d5c;
+    --azul-claro: #1f5b86;
+    --verde: #2e7d46;
+    --vermelho: #b3261e;
+    --fundo: #eef2f5;
+    --cartao: #ffffff;
+    --texto: #1a1a1a;
+    --texto-suave: #46525c;
+    --borda: #c9d4dc;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+    background: var(--fundo);
+    color: var(--texto);
+    display:flex;
+    justify-content:center;
+    padding: 24px 12px;
+    font-size: 20px;
+    line-height:1.4;
+  }
+  .telefone{
+    width: 400px;
+    max-width: 100%;
+    background: var(--cartao);
+    border: 10px solid #0d2436;
+    border-radius: 36px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    overflow: hidden;
+    min-height: 720px;
+    display:flex;
+    flex-direction:column;
+  }
+  header.topo{
+    background: var(--azul);
+    color: #fff;
+    padding: 18px 16px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    min-height: 34px;
+  }
+  header.topo button.voltar{
+    background:transparent;
+    border:none;
+    color:#fff;
+    font-size: 26px;
+    cursor:pointer;
+    padding:4px 8px;
+    line-height:1;
+  }
+  header.topo h1{
+    font-size: 22px;
+    margin:0;
+    font-weight:600;
+  }
+  main{
+    flex:1;
+    padding: 20px 16px 28px;
+    overflow-y:auto;
+  }
+  .relogio{
+    text-align:center;
+    font-size:15px;
+    color:var(--texto-suave);
+    padding: 6px 0 0;
+  }
+
+  /* ---------- Tela inicial ---------- */
+  .grade-apps{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 12px;
+  }
+  .app-icone{
+    background: var(--cartao);
+    border: 2px solid var(--borda);
+    border-radius: 18px;
+    padding: 22px 10px;
+    text-align:center;
+    cursor:pointer;
+    font-size: 18px;
+    font-weight:600;
+    color: var(--texto);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    min-height: 120px;
+    justify-content:center;
+  }
+  .app-icone:active{ transform: scale(0.97); }
+  .app-icone .simbolo{
+    width:56px;height:56px;border-radius:14px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:28px;color:#fff;
+  }
+  .bem-vindo{
+    text-align:center;
+    color:var(--texto-suave);
+    font-size:17px;
+    margin: 6px 0 4px;
+  }
+
+  /* ---------- Botões / genéricos ---------- */
+  button{
+    font-family:inherit;
+    font-size: 19px;
+  }
+  .botao{
+    display:block;
+    width:100%;
+    padding: 16px;
+    border-radius: 14px;
+    border: none;
+    background: var(--azul);
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
+    margin-top:12px;
+  }
+  .botao.secundario{
+    background:#fff;
+    color:var(--azul);
+    border: 2px solid var(--azul);
+  }
+  .botao.sucesso{ background: var(--verde); }
+  .botao.perigo{ background: var(--vermelho); }
+  .cartao{
+    background:#fff;
+    border:2px solid var(--borda);
+    border-radius:16px;
+    padding:16px;
+    margin-bottom:14px;
+  }
+
+  /* ---------- WhatsApp ---------- */
+  .contato{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding: 14px 6px;
+    border-bottom: 1px solid var(--borda);
+    cursor:pointer;
+  }
+  .avatar{
+    width:52px;height:52px;border-radius:50%;
+    background:var(--azul-claro);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;font-weight:700;flex-shrink:0;
+  }
+  .contato .info b{font-size:19px;}
+  .contato .info span{display:block;color:var(--texto-suave);font-size:15px;}
+
+  .chat-area{
+    display:flex;flex-direction:column;gap:10px;
+    min-height: 340px;
+  }
+  .bolha{
+    max-width: 78%;
+    padding: 12px 14px;
+    border-radius: 16px;
+    font-size:18px;
+  }
+  .bolha.recebida{
+    background:#e6ecf1; align-self:flex-start; border-bottom-left-radius:4px;
+  }
+  .bolha.enviada{
+    background: var(--verde); color:#fff; align-self:flex-end; border-bottom-right-radius:4px;
+  }
+  .campo-mensagem{
+    display:flex; gap:10px; margin-top:14px;
+  }
+  .campo-mensagem input{
+    flex:1;
+    padding: 14px;
+    font-size:18px;
+    border-radius: 14px;
+    border: 2px solid var(--borda);
+  }
+  .campo-mensagem button{
+    background:var(--verde);color:#fff;border:none;border-radius:14px;
+    padding: 0 20px; font-weight:700; cursor:pointer;
+  }
+  .linha-acoes{ display:flex; gap:10px; margin-bottom: 16px; }
+  .linha-acoes .botao{ margin-top:0; }
+
+  .modal-fundo{
+    position:fixed; inset:0; background:rgba(0,0,0,.55);
+    display:flex; align-items:center; justify-content:center;
+    z-index: 50;
+  }
+  .modal-chamada{
+    background: var(--azul);
+    color:#fff;
+    width: 300px;
+    border-radius: 20px;
+    padding: 34px 22px;
+    text-align:center;
+  }
+  .modal-chamada .avatar{
+    width:90px;height:90px;font-size:36px;margin:0 auto 14px;
+    background:var(--azul-claro);
+  }
+  .modal-chamada .cronometro{ font-size:26px; margin: 10px 0 20px; letter-spacing:1px; }
+  .botao-encerrar{
+    background: var(--vermelho); color:#fff; border:none; border-radius:50%;
+    width:64px;height:64px;font-size:26px;cursor:pointer;
+  }
+
+  /* ---------- Segurança digital ---------- */
+  .mensagem-exemplo{
+    background:#fffbe6;
+    border:2px solid #e8d98a;
+    border-radius:14px;
+    padding:14px;
+    font-size:18px;
+    margin-bottom:14px;
+  }
+  .escolhas{ display:flex; gap:10px; }
+  .escolhas button{ flex:1; }
+  .feedback{
+    margin-top:12px;
+    padding:12px 14px;
+    border-radius:12px;
+    font-weight:600;
+    font-size:18px;
+  }
+  .feedback.certo{ background:#e3f3e7; color:var(--verde); border:2px solid var(--verde); }
+  .feedback.errado{ background:#fbe9e7; color:var(--vermelho); border:2px solid var(--vermelho); }
+
+  /* ---------- Ajustes ---------- */
+  .item-ajuste{ margin-bottom:22px; }
+  .item-ajuste label{ display:block; font-weight:600; margin-bottom:8px; font-size:19px; }
+  .item-ajuste input[type=range]{ width:100%; height:34px; }
+  .interruptor{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 6px 0;
+  }
+  .chave{
+    width:56px;height:32px;border-radius:20px;background:#c9d4dc;
+    position:relative;cursor:pointer;transition:.2s;
+  }
+  .chave.ligado{ background: var(--verde); }
+  .chave .bolinha{
+    width:26px;height:26px;border-radius:50%;background:#fff;
+    position:absolute;top:3px;left:3px;transition:.2s;
+    box-shadow:0 1px 3px rgba(0,0,0,.3);
+  }
+  .chave.ligado .bolinha{ left:27px; }
+
+  .oculto{ display:none !important; }
+  footer.rodape{
+    text-align:center;
+    font-size:13px;
+    color:var(--texto-suave);
+    padding: 10px;
+    border-top:1px solid var(--borda);
+  }
+</style>
+</head>
+<body>
+
+<div class="telefone">
+  <header class="topo">
+    <button class="voltar oculto" id="btnVoltar" aria-label="Voltar">←</button>
+    <h1 id="tituloTela">Início</h1>
+  </header>
+  <div class="relogio" id="relogio"></div>
+  <main id="conteudo"></main>
+  <footer class="rodape">Simulador Passo a Passo — treino seguro, sem internet</footer>
+</div>
+
+<script>
+/* =========================================================
+   Simulador Passo a Passo
+   Oficina de Inclusão Digital — Gravataí/RS
+   Ferramenta de apoio à capacitação de idosos no uso do
+   smartphone, WhatsApp e segurança digital.
+   ========================================================= */
+
+const conteudo   = document.getElementById('conteudo');
+const titulo     = document.getElementById('tituloTela');
+const btnVoltar  = document.getElementById('btnVoltar');
+
+let pilha = []; // histórico de telas, para o botão "voltar"
+
+function irPara(tela, dados){
+  pilha.push({tela, dados});
+  desenhar(tela, dados);
+}
+function voltar(){
+  pilha.pop();
+  const anterior = pilha[pilha.length-1] || {tela:'inicio'};
+  desenhar(anterior.tela, anterior.dados);
+}
+btnVoltar.addEventListener('click', voltar);
+
+function desenhar(tela, dados){
+  btnVoltar.classList.toggle('oculto', tela === 'inicio');
+  const telas = {
+    inicio: telaInicio,
+    whatsapp: telaWhatsApp,
+    chat: () => telaChat(dados),
+    seguranca: telaSeguranca,
+    ajustes: telaAjustes,
+  };
+  (telas[tela] || telaInicio)();
+}
+
+/* ---------- Relógio simulado ---------- */
+function atualizarRelogio(){
+  const agora = new Date();
+  const hh = String(agora.getHours()).padStart(2,'0');
+  const mm = String(agora.getMinutes()).padStart(2,'0');
+  document.getElementById('relogio').textContent = hh + ':' + mm;
+}
+setInterval(atualizarRelogio, 1000);
+atualizarRelogio();
+
+/* ============ TELA: INÍCIO ============ */
+function telaInicio(){
+  titulo.textContent = 'Início';
+  conteudo.innerHTML = `
+    <p class="bem-vindo">Toque em um aplicativo para praticar</p>
+    <div class="grade-apps">
+      <div class="app-icone" data-app="whatsapp">
+        <div class="simbolo" style="background:#2e7d46;">💬</div>
+        WhatsApp
+      </div>
+      <div class="app-icone" data-app="seguranca">
+        <div class="simbolo" style="background:#b3261e;">🛡️</div>
+        Segurança
+      </div>
+      <div class="app-icone" data-app="ajustes">
+        <div class="simbolo" style="background:#5b6b78;">⚙️</div>
+        Ajustes
+      </div>
+      <div class="app-icone" data-app="camera-desativado" style="opacity:.55;cursor:default;">
+        <div class="simbolo" style="background:#8a97a1;">📷</div>
+        Câmera
+      </div>
+    </div>
+  `;
+  conteudo.querySelectorAll('.app-icone[data-app]').forEach(el=>{
+    el.addEventListener('click', () => {
+      const app = el.dataset.app;
+      if(app === 'whatsapp') irPara('whatsapp');
+      if(app === 'seguranca') irPara('seguranca');
+      if(app === 'ajustes') irPara('ajustes');
+    });
+  });
+}
+
+/* ============ TELA: WHATSAPP (lista de contatos) ============ */
+const contatos = [
+  {id:'filha', nome:'Márcia (filha)', letra:'M', ultima:'Toque para conversar'},
+  {id:'neto',  nome:'Lucas (neto)',   letra:'L', ultima:'Toque para conversar'},
+  {id:'posto', nome:'Posto de Saúde', letra:'P', ultima:'Toque para conversar'},
+];
+
+function telaWhatsApp(){
+  titulo.textContent = 'WhatsApp';
+  conteudo.innerHTML = `
+    <p class="bem-vindo">Selecione um contato para praticar o envio de mensagens e chamadas</p>
+    <div id="listaContatos"></div>
+  `;
+  const lista = document.getElementById('listaContatos');
+  contatos.forEach(c=>{
+    const div = document.createElement('div');
+    div.className = 'contato';
+    div.innerHTML = `
+      <div class="avatar">${c.letra}</div>
+      <div class="info"><b>${c.nome}</b><span>${c.ultima}</span></div>
+    `;
+    div.addEventListener('click', ()=> irPara('chat', c));
+    lista.appendChild(div);
+  });
+}
+
+/* ============ TELA: CHAT (conversa simulada) ============ */
+const memoriaChats = {}; // guarda mensagens digitadas durante a sessão
+
+function telaChat(contato){
+  titulo.textContent = contato.nome;
+  if(!memoriaChats[contato.id]){
+    memoriaChats[contato.id] = [
+      {de:'eles', texto:'Oi! Tudo bem? Esse é só um treino, pode praticar à vontade 🙂'},
+    ];
+  }
+  conteudo.innerHTML = `
+    <div class="linha-acoes">
+      <button class="botao sucesso" id="btnAudio">📞 Chamada de voz</button>
+      <button class="botao secundario" id="btnVideo">🎥 Videochamada</button>
+    </div>
+    <div class="chat-area" id="areaChat"></div>
+    <div class="campo-mensagem">
+      <input type="text" id="campoTexto" placeholder="Digite uma mensagem..." />
+      <button id="btnEnviar">Enviar</button>
+    </div>
+  `;
+  renderizarMensagens(contato.id);
+
+  document.getElementById('btnEnviar').addEventListener('click', ()=>{
+    const campo = document.getElementById('campoTexto');
+    const texto = campo.value.trim();
+    if(texto === '') return;
+    memoriaChats[contato.id].push({de:'eu', texto});
+    campo.value = '';
+    renderizarMensagens(contato.id);
+    setTimeout(()=>{
+      memoriaChats[contato.id].push({de:'eles', texto:'Mensagem recebida! Muito bem, você conseguiu enviar. 👏'});
+      renderizarMensagens(contato.id);
+    }, 700);
+  });
+  document.getElementById('campoTexto').addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter') document.getElementById('btnEnviar').click();
+  });
+
+  document.getElementById('btnAudio').addEventListener('click', ()=> abrirChamada(contato, 'voz'));
+  document.getElementById('btnVideo').addEventListener('click', ()=> abrirChamada(contato, 'video'));
+}
+
+function renderizarMensagens(idContato){
+  const area = document.getElementById('areaChat');
+  area.innerHTML = '';
+  memoriaChats[idContato].forEach(m=>{
+    const bolha = document.createElement('div');
+    bolha.className = 'bolha ' + (m.de === 'eu' ? 'enviada' : 'recebida');
+    bolha.textContent = m.texto;
+    area.appendChild(bolha);
+  });
+  area.scrollTop = area.scrollHeight;
+}
+
+/* ---------- Simulação de chamada ---------- */
+function abrirChamada(contato, tipo){
+  const fundo = document.createElement('div');
+  fundo.className = 'modal-fundo';
+  fundo.innerHTML = `
+    <div class="modal-chamada">
+      <div class="avatar">${contato.letra}</div>
+      <div>${contato.nome}</div>
+      <div style="opacity:.85;margin-top:4px;">${tipo === 'video' ? 'Videochamada' : 'Chamada de voz'} em andamento</div>
+      <div class="cronometro" id="cronometro">00:00</div>
+      <button class="botao-encerrar" id="btnEncerrar">✖</button>
+    </div>
+  `;
+  document.body.appendChild(fundo);
+  let segundos = 0;
+  const cron = fundo.querySelector('#cronometro');
+  const intervalo = setInterval(()=>{
+    segundos++;
+    const mm = String(Math.floor(segundos/60)).padStart(2,'0');
+    const ss = String(segundos%60).padStart(2,'0');
+    cron.textContent = `${mm}:${ss}`;
+  }, 1000);
+  fundo.querySelector('#btnEncerrar').addEventListener('click', ()=>{
+    clearInterval(intervalo);
+    fundo.remove();
+  });
+}
+
+/* ============ TELA: SEGURANÇA DIGITAL ============ */
+const exemplosSeguranca = [
+  {
+    texto: '"PARABÉNS! Você ganhou um prêmio de R$ 5.000. Clique no link e informe seus dados bancários para receber."',
+    golpe: true,
+    explicacao: 'É um golpe: pede dados bancários por link desconhecido e promete um prêmio que você não concorreu.'
+  },
+  {
+    texto: '"Oi, mãe! Cheguei bem em casa, já almocei. Te ligo mais tarde. Beijo!"',
+    golpe: false,
+    explicacao: 'Mensagem normal de um familiar, sem pedido de dados ou dinheiro.'
+  },
+  {
+    texto: '"Aqui é do seu banco. Sua conta será bloqueada hoje. Ligue urgente para este número e informe sua senha."',
+    golpe: true,
+    explicacao: 'É um golpe: bancos nunca pedem senha por mensagem, e a urgência é uma tática para assustar.'
+  },
+  {
+    texto: '"Lembrete: sua consulta no posto de saúde é amanhã às 14h."',
+    golpe: false,
+    explicacao: 'Mensagem normal de agendamento, sem solicitar dados pessoais ou pagamentos.'
+  }
+];
+let indiceSeguranca = 0;
+
+function telaSeguranca(){
+  titulo.textContent = 'Segurança Digital';
+  indiceSeguranca = 0;
+  desenharExemploSeguranca();
+}
+
+function desenharExemploSeguranca(){
+  const ex = exemplosSeguranca[indiceSeguranca];
+  conteudo.innerHTML = `
+    <p class="bem-vindo">Leia a mensagem abaixo e decida: é uma mensagem confiável ou um golpe?</p>
+    <div class="mensagem-exemplo">${ex.texto}</div>
+    <div class="escolhas">
+      <button class="botao sucesso" id="btnConfiavel">✅ Confiável</button>
+      <button class="botao perigo" id="btnGolpe">🚫 É golpe</button>
+    </div>
+    <div id="areaFeedback"></div>
+  `;
+  document.getElementById('btnConfiavel').addEventListener('click', ()=> responderSeguranca(false));
+  document.getElementById('btnGolpe').addEventListener('click', ()=> responderSeguranca(true));
+}
+
+function responderSeguranca(escolheuGolpe){
+  const ex = exemplosSeguranca[indiceSeguranca];
+  const acertou = escolheuGolpe === ex.golpe;
+  const area = document.getElementById('areaFeedback');
+  area.innerHTML = `
+    <div class="feedback ${acertou ? 'certo' : 'errado'}">
+      ${acertou ? 'Isso mesmo!' : 'Não foi dessa vez.'} ${ex.explicacao}
+    </div>
+    <button class="botao" id="btnProximo">Próximo exemplo →</button>
+  `;
+  document.getElementById('btnProximo').addEventListener('click', ()=>{
+    indiceSeguranca = (indiceSeguranca + 1) % exemplosSeguranca.length;
+    desenharExemploSeguranca();
+  });
+}
+
+/* ============ TELA: AJUSTES ============ */
+const estadoAjustes = { volume:70, brilho:80, wifi:true };
+
+function telaAjustes(){
+  titulo.textContent = 'Ajustes';
+  conteudo.innerHTML = `
+    <div class="item-ajuste">
+      <label for="rangeVolume">🔊 Volume</label>
+      <input type="range" id="rangeVolume" min="0" max="100" value="${estadoAjustes.volume}">
+    </div>
+    <div class="item-ajuste">
+      <label for="rangeBrilho">☀️ Brilho da tela</label>
+      <input type="range" id="rangeBrilho" min="10" max="100" value="${estadoAjustes.brilho}">
+    </div>
+    <div class="item-ajuste interruptor">
+      <label style="margin:0;">📶 Wi-Fi</label>
+      <div class="chave ${estadoAjustes.wifi ? 'ligado':''}" id="chaveWifi"><div class="bolinha"></div></div>
+    </div>
+    <p class="bem-vindo" style="margin-top:20px;">Arraste as barras e toque na chave para praticar.</p>
+  `;
+  document.getElementById('rangeVolume').addEventListener('input', e=> estadoAjustes.volume = e.target.value);
+  document.getElementById('rangeBrilho').addEventListener('input', e=> estadoAjustes.brilho = e.target.value);
+  document.getElementById('chaveWifi').addEventListener('click', function(){
+    estadoAjustes.wifi = !estadoAjustes.wifi;
+    this.classList.toggle('ligado', estadoAjustes.wifi);
+  });
+}
+
+/* ---------- Inicialização ---------- */
+irPara('inicio');
+</script>
+</body>
+</html>
